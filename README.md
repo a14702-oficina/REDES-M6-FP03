@@ -19,9 +19,6 @@ O sistema oferece as seguintes funcionalidades principais:
 
 A base de dados é composta por quatro tabelas principais, desenhadas para garantir a integridade referencial e a organização lógica dos dados [1].
 
-### Diagrama Entidade-Relacionamento (Conceitual)
-
-![Diagrama ERD](/home/ubuntu/projeto_redes/erd.png)
 ### Tabelas e suas Relações
 
 | Tabela        | Descrição                                                              | Chave Primária (PK) | Chaves Estrangeiras (FK)                                     |
