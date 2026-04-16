@@ -1,0 +1,42 @@
+Evidência 1 - Explicação do Sistema
+
+1.  **Porque existem estas 4 tabelas (salas, equipamentos, tecnicos, intervencoes)?**
+    As quatro tabelas foram criadas para organizar de forma lógica e eficiente os diferentes tipos de informação necessários para o sistema de gestão de infraestrutura de rede escolar. Cada tabela representa uma entidade principal do domínio do problema:
+    *   **Salas:** Armazena informações sobre os locais físicos onde os equipamentos estão instalados. É fundamental para a organização espacial da rede.
+    *   **Equipamentos:** Contém os detalhes dos dispositivos de rede (routers, switches, access points, etc.). Esta tabela é central, pois os equipamentos são o foco principal da gestão.
+    *   **Técnicos:** Guarda os dados dos profissionais responsáveis pelas intervenções. Permite associar as ações realizadas a quem as executou.
+    *   **Intervenções:** Regista todas as ações de manutenção, configuração ou reparação realizadas nos equipamentos. É crucial para o histórico e rastreabilidade das operações.
+    
+    A separação em tabelas distintas evita a redundância de dados e melhora a integridade e a performance da base de dados, seguindo os princípios da normalização.
+
+2.  **Para que servem as Chaves Estrangeiras (FK)?**
+    As Chaves Estrangeiras (Foreign Keys - FK) são colunas numa tabela que estabelecem uma ligação para a Chave Primária (Primary Key - PK) de outra tabela. A sua principal função é garantir a **integridade referencial** entre as tabelas. Isso significa que:
+    *   **Coerência de Dados:** Uma FK assegura que um valor numa coluna de uma tabela (tabela filha) deve corresponder a um valor existente na PK da tabela relacionada (tabela pai), ou ser NULL (se permitido). Por exemplo, `id_sala` na tabela `equipamentos` só pode conter um `id_sala` que realmente exista na tabela `salas`.
+    *   **Relacionamento:** Permitem estabelecer e manter as relações entre as entidades. No nosso sistema, as FKs ligam equipamentos a salas, e intervenções a equipamentos e técnicos, permitindo consultas complexas que combinam dados de várias tabelas.
+    *   **Prevenção de Erros:** Impedem a criação de "registos órfãos" (por exemplo, uma intervenção associada a um equipamento que já não existe) e ajudam a manter a base de dados consistente.
+
+3.  **Explicação de 2 JOINs usados no projeto:**
+    No projeto, utilizamos a cláusula `JOIN` para combinar linhas de duas ou mais tabelas com base numa coluna relacionada entre elas. Dois exemplos cruciais são:
+    
+    *   **`LEFT JOIN` para listar equipamentos com as suas salas (em `equipamentos.php`):**
+        ```sql
+        SELECT e.id_equipamento, e.tipo, e.marca, e.modelo, e.endereco_ip, s.nome_sala 
+        FROM equipamentos e 
+        LEFT JOIN salas s ON e.id_sala = s.id_sala
+        ```
+        Este `LEFT JOIN` é usado para listar todos os equipamentos (`e`) e, se houver uma sala associada (`s`), mostrar o nome dessa sala. Se um equipamento não tiver uma sala associada (o `id_sala` for NULL na tabela `equipamentos`), ele ainda será incluído no resultado, mas a coluna `nome_sala` aparecerá como NULL. Isto é útil para garantir que todos os equipamentos são listados, independentemente de terem uma sala atribuída.
+        
+    *   **`JOIN` (INNER JOIN implícito) para listar intervenções com dados "humanos" (em `intervencoes.php`):**
+        ```sql
+        SELECT i.id_intervencao, i.data_intervencao, i.descricao, e.marca, e.modelo, t.nome 
+        FROM intervencoes i 
+        JOIN equipamentos e ON i.id_equipamento = e.id_equipamento 
+        JOIN tecnicos t ON i.id_tecnico = t.id_tecnico
+        ```
+        Aqui, usamos `JOIN` (que por padrão é um `INNER JOIN`) para combinar as tabelas `intervencoes` (`i`), `equipamentos` (`e`) e `tecnicos` (`t`). O objetivo é apresentar uma lista de intervenções onde, para cada intervenção, são mostrados os detalhes do equipamento (marca e modelo) e o nome do técnico responsável. Apenas as intervenções que têm correspondência tanto em `equipamentos` quanto em `tecnicos` serão incluídas no resultado, garantindo que a informação apresentada é completa e consistente.
+
+4.  **Explicação da query “equipamentos sem intervenções” (por palavras do aluno):**
+    A query para encontrar 
+equipamentos sem intervenções é crucial para identificar dispositivos que podem estar a ser negligenciados ou que ainda não necessitaram de manutenção. Esta consulta utiliza um `LEFT JOIN` entre a tabela `equipamentos` e a tabela `intervencoes`.
+
+    A lógica é a seguinte: o `LEFT JOIN` garante que todos os equipamentos serão listados, mesmo que não tenham nenhuma intervenção associada. Para os equipamentos que não têm intervenções, as colunas da tabela `intervencoes` aparecerão como `NULL`. Em seguida, usamos a função `COUNT(i.id_intervencao)` para contar o número de intervenções para cada equipamento. Finalmente, a cláusula `HAVING num_intervencoes = 0` filtra os resultados, mostrando apenas os equipamentos cujo contador de intervenções é zero. Isto permite-nos obter uma lista precisa de todos os equipamentos que nunca foram alvo de qualquer intervenção técnica registada no sistema.
