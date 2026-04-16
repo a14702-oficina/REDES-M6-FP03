@@ -1,5 +1,5 @@
 # Sistema de Gestão de Infraestrutura de Rede Escolar (REDES-M6-FP03)
-
+link: https://a14702-oficina.infinityfree.me/ficha1/login.php
 ## Descrição do Projeto
 
 Este projeto consiste num sistema web desenvolvido em PHP para a gestão de infraestruturas de rede em ambiente escolar. O objetivo principal é facilitar o registo e a monitorização de salas, equipamentos de rede (routers, switches, access points), técnicos responsáveis e as intervenções realizadas nesses equipamentos. O sistema foi concebido para ser uma ferramenta eficiente na organização e rastreabilidade das operações de manutenção e configuração da rede escolar.
