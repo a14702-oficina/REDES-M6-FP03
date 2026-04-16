@@ -32,5 +32,4 @@ Este projeto consiste num sistema de gestão para infraestruturas de rede escola
 3. Coloque os ficheiros num servidor web com suporte para PHP (ex: XAMPP, WAMP).
 4. Aceda ao `index.php` para iniciar a aplicação.
 
----
-*Projeto desenvolvido para fins académicos.*
+
